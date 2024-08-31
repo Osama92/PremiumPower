@@ -1,5 +1,6 @@
 import { Text, View, StyleSheet, Image, TextInput,KeyboardAvoidingView, Platform, TouchableWithoutFeedback, TouchableOpacity} from "react-native";
 import { useFonts } from 'expo-font';
+import {Link} from 'expo-router'
 
 
 export default function Index() {
@@ -37,7 +38,9 @@ export default function Index() {
         <View style={styles.coa}>
           <Text style={{fontSize:12}}>Don’t have a Login access?</Text>
           <TouchableOpacity>
+            <Link href={'/signUp'} asChild>
             <Text style={{fontSize:12, color:'#F1B20A', fontWeight:'700'}}> Request a Login here</Text>
+            </Link>
           </TouchableOpacity>
         </View>
       </View>
