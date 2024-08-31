@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, Image, TextInput,KeyboardAvoidingView, Platform } from "react-native";
+import { Text, View, StyleSheet, Image, TextInput,KeyboardAvoidingView, Platform, TouchableWithoutFeedback, TouchableOpacity} from "react-native";
 import { useFonts } from 'expo-font';
 
 
@@ -25,9 +25,20 @@ export default function Index() {
         <Text style={styles.bigText}>LOGIN</Text>
         <View style={styles.inputSection}>
           <TextInput style={styles.inputArea}
-                     placeholder="Enter Username"/>
+                     placeholder="Enter Username"
+                     placeholderTextColor={'#00443F'}/>
           <TextInput style={styles.inputArea1}
-                     placeholder="Enter Password"/>
+                     placeholder="Enter Password"
+                     placeholderTextColor={'#00443F'}/>
+        </View>
+        <TouchableOpacity style={styles.loginBtn}>
+          <Text style={styles.loginText}>Login</Text>
+        </TouchableOpacity>
+        <View style={styles.coa}>
+          <Text style={{fontSize:12}}>Don’t have a Login access?</Text>
+          <TouchableOpacity>
+            <Text style={{fontSize:12, color:'#F1B20A', fontWeight:'700'}}> Request a Login here</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -72,22 +83,45 @@ const styles = StyleSheet.create({
   inputSection: {
     width:'100%',
     height: 150,
-    // justifyContent:'space-between',
     marginTop: 20,
-    marginLeft: 20
+    marginLeft: 20,
   },
   inputArea: {
     backgroundColor: '#f2f2f2',
-    height: '40%',
+    height: 50,
     borderRadius: 10,
     paddingLeft: 10,
+    color: '#00443F' 
   },
   inputArea1: {
     backgroundColor: '#f2f2f2',
-    height: '40%',
+    height: 50,
     borderRadius: 10,
     paddingLeft: 10,
-    marginTop:20
+    marginTop:20,
+    color: '#00443F'
+  },
+  loginBtn: {
+    width:'100%',
+    height:50,
+    backgroundColor: '#00443F',
+    marginLeft: 20,
+    justifyContent:'center',
+    alignItems:'center',
+    borderRadius: 10,
+  },
+  loginText: {
+    color:'white',
+  },
+  coa: {
+    width: '100%',
+    height:40,
+    marginLeft: 20,
+    alignItems: 'center',
+    marginTop: 15,
+    flexDirection: 'row',
+    // flexWrap:'wrap',
+    // backgroundColor:'orange'
   }
 
 });
