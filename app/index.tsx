@@ -124,8 +124,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 15,
     flexDirection: 'row',
-    // flexWrap:'wrap',
-    // backgroundColor:'orange'
   }
 
 });
