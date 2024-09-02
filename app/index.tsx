@@ -77,7 +77,8 @@ const styles = StyleSheet.create({
   },
   logosize: {
     height: '100%',
-    width: '30%',
+    width: 120,
+    marginLeft: 15,
   },
   editArea: {
     width: '100%',
