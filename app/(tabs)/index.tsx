@@ -4,11 +4,17 @@ import React, { Component } from 'react'
 export default class HomeScreen extends Component {
   render() {
     return (
-      <View>
-        <Text>index</Text>
+      <View style={styles.container}>
+        <Text>Index</Text>
       </View>
     )
   }
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: {
+        justifyContent:'center',
+        alignItems: 'center',
+        flex: 1
+    }
+})
