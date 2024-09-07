@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Text, View, StyleSheet, Image, TextInput, KeyboardAvoidingView, Platform, TouchableOpacity, ActivityIndicator } from "react-native";
+import { Text, View, StyleSheet, Image, TextInput, KeyboardAvoidingView, Platform, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { useFonts } from 'expo-font';
 import { Link, useRouter } from 'expo-router';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -26,7 +26,8 @@ export default function Index() {
       })
       .catch((error) => {
         setLoading(false); // Stop loading spinner
-        setError('Invalid email or password');
+        setError('Forgot Password? Recover it here');
+        Alert.alert('Invalid Email or Password')
       });
   };
 
@@ -61,7 +62,9 @@ export default function Index() {
               onChangeText={setPassword}
               secureTextEntry
             />
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            {error ? <TouchableOpacity style={styles.loginErrorView}>
+              <Text style={styles.errorText}>{error}</Text>
+            </TouchableOpacity> : null}
           </View>
           <TouchableOpacity style={styles.loginBtn} onPress={handleLogin} disabled={loading}>
             {loading ? (
@@ -164,6 +167,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 15,
     flexDirection: 'row',
+  },
+  loginErrorView: {
+    width: '100%',
+    height: 40,
   }
 
 });
