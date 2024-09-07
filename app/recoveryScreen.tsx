@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image, Alert as RNAlert } from 'react-native';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth'; // Ensure Firebase is set up properly
 import { useFonts } from 'expo-font';
+import { useRouter } from 'expo-router'; // Import useRouter for navigation
 
 export default function RecoverPassword() {
   const [email, setEmail] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter(); // Initialize router for navigation
 
   // Load custom fonts (Montserrat)
   const [fontsLoaded] = useFonts({
@@ -35,6 +37,9 @@ export default function RecoverPassword() {
     try {
       await sendPasswordResetEmail(auth, email);
       showAlert('Success', 'Password reset email sent! Check your inbox.');
+
+      // Navigate back to the previous screen after successful password reset
+      router.back(); // Go back to the previous screen
     } catch (error: any) {
       // Check error codes for different reasons email might fail
       if (error.code === 'auth/user-not-found') {
