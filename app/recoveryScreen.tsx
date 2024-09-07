@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image, Alert as RNAlert } from 'react-native';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth'; // Ensure Firebase is set up properly
 import { useFonts } from 'expo-font';
 
@@ -13,10 +13,19 @@ export default function RecoverPassword() {
     MontserratBold: require('../assets/fonts/Montserrat-ExtraBold.ttf'),
   });
 
+  // Platform-agnostic alert function
+  const showAlert = (title: string, message: string) => {
+    if (Platform.OS === 'web') {
+      window.alert(`${title}: ${message}`);
+    } else {
+      RNAlert.alert(title, message);
+    }
+  };
+
   // Validate if email is registered and send reset email
   const handlePasswordReset = async () => {
     if (!email) {
-      Alert.alert('Validation', 'Please enter an email address.');
+      showAlert('Validation', 'Please enter an email address.');
       return;
     }
 
@@ -25,15 +34,15 @@ export default function RecoverPassword() {
 
     try {
       await sendPasswordResetEmail(auth, email);
-      Alert.alert('Success', 'Password reset email sent! Check your inbox.');
+      showAlert('Success', 'Password reset email sent! Check your inbox.');
     } catch (error: any) {
       // Check error codes for different reasons email might fail
       if (error.code === 'auth/user-not-found') {
-        Alert.alert('Error', 'No account found with this email address.');
+        showAlert('Error', 'No account found with this email address.');
       } else if (error.code === 'auth/invalid-email') {
-        Alert.alert('Error', 'Invalid email format.');
+        showAlert('Error', 'Invalid email format.');
       } else {
-        Alert.alert('Error', 'Failed to send password reset email. Try again later.');
+        showAlert('Error', 'Failed to send password reset email. Try again later.');
       }
     } finally {
       setIsLoading(false);
@@ -44,9 +53,12 @@ export default function RecoverPassword() {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      enabled
+      enabled={Platform.OS !== 'web'} // Disable KeyboardAvoidingView for web
     >
       <View style={styles.innerContainer}>
+        <View style={styles.logoHolder}>
+          <Image source={require('../assets/images/Secure data.png')} style={styles.logo} resizeMode="contain" />
+        </View>
         <Text style={styles.title}>Recover Password</Text>
         <TextInput
           style={styles.input}
@@ -75,6 +87,7 @@ const styles = StyleSheet.create({
   innerContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    height: '100%',
   },
   title: {
     fontFamily: 'MontserratBold',
@@ -105,5 +118,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'Montserrat',
     fontSize: 16,
+  },
+  logoHolder: {
+    width: '50%',
+    height: '30%',
+  },
+  logo: {
+    width: '100%',
+    height: '100%',
   },
 });

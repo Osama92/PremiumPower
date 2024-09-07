@@ -62,9 +62,11 @@ export default function Index() {
               onChangeText={setPassword}
               secureTextEntry
             />
-            {error ? <TouchableOpacity style={styles.loginErrorView}>
+            {error ? <Link href={'/recoveryScreen'} asChild>
+            <TouchableOpacity style={styles.loginErrorView}>
               <Text style={styles.errorText}>{error}</Text>
-            </TouchableOpacity> : null}
+            </TouchableOpacity>
+            </Link> : null}
           </View>
           <TouchableOpacity style={styles.loginBtn} onPress={handleLogin} disabled={loading}>
             {loading ? (
