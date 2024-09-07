@@ -22,7 +22,8 @@ export default function Index() {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         setLoading(false); // Stop loading spinner
-        router.push('/(tabs)'); // Redirect to Dashboard screen
+        // router.push('/(tabs)'); // Redirect to Dashboard screen
+        router.push('/masterAdmin')
       })
       .catch((error) => {
         setLoading(false); // Stop loading spinner
