@@ -210,7 +210,7 @@ export default function Index() {
 
         // Query the Firestore Users collection to find the user's designation
         const usersRef = collection(firestore, 'Users');
-        const q = query(usersRef, where('createdBy', '==', email)); // Assuming Users collection has email field
+        const q = query(usersRef, where('email', '==', email)); // Assuming Users collection has email field
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {

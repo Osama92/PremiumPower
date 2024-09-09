@@ -7,6 +7,7 @@ import { useFonts } from 'expo-font'; // Import useFonts from expo-font
 export default function masterAdmin() {
   const [username, setUsername] = useState<string>('');
   const [designation, setDesignation] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [location, setLocation] = useState<string>(''); // Location state added
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,6 +46,7 @@ export default function masterAdmin() {
       setUsername('');
       setDesignation('');
       setLocation('');
+      setEmail('');
     } catch (error: any) {
       Alert.alert('Error', 'Failed to create user. Please try again.');
       console.error('Error creating user:', error);
@@ -67,6 +69,13 @@ export default function masterAdmin() {
           placeholder="Enter Username"
           placeholderTextColor="#00443F"
           onChangeText={setUsername}
+          value={username}
+        />
+         <TextInput
+          style={styles.input}
+          placeholder="Enter Email"
+          placeholderTextColor="#00443F"
+          onChangeText={setEmail}
           value={username}
         />
 
