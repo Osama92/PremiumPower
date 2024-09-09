@@ -4,11 +4,17 @@ import React, { Component } from 'react'
 export default class test extends Component {
   render() {
     return (
-      <View>
-        <Text>test</Text>
+      <View style={styles.container}>
+        <Text>Test</Text>
       </View>
     )
   }
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: {
+        justifyContent:'center',
+        alignItems: 'center',
+        flex: 1
+    }
+})
