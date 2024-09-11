@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: 'center',
+    //justifyContent: 'center',
     alignItems: 'center',
   },
   headerText: {
@@ -100,17 +100,17 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   pressable: {
-    backgroundColor: '#3498db',
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 5,
     marginHorizontal: 10,
   },
   pressableText: {
-    color: 'white',
+    color: '#00443F',
     fontWeight: 'bold',
+    fontSize: 12,
   },
   selectedJobText: {
-    fontSize: 18,
+    fontSize: 15,
     marginTop: 20,
   },
   centered: {
