@@ -273,7 +273,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const [designation, setDesignation] = useState<string | null>(null);
+  const [designation1, setDesignation] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -295,7 +295,7 @@ export default function TabLayout() {
 
               if (userData?.designation) {
                 setDesignation(userData.designation); // Set designation if found
-                 console.log(designation)
+                 console.log(designation1)
               } else {
                 Alert.alert('Error', 'No designation found for this user.');
               }
@@ -344,7 +344,7 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Show "Explore" tab only for Engineer, hide if designation does not match */}
+      Show "Explore" tab only for Engineer, hide if designation does not match
       <Tabs.Screen
         name="explore"
         options={{
@@ -352,7 +352,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'compass' : 'compass-outline'} color={color} />
           ),
-          href: designation === 'Engineer' ? undefined : null, // Hide tab if not Engineer
+          href: designation1 === 'Engineer' ? undefined : null, // Hide tab if not Engineer
         }}
       />
 
@@ -364,7 +364,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'flask' : 'flask-outline'} color={color} />
           ),
-          href: designation === 'Supervisor' ? undefined : null, // Hide tab if not Supervisor
+          href: designation1 === 'Supervisor' ? undefined : null, // Hide tab if not Supervisor
         }}
       />
     </Tabs>
