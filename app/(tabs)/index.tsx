@@ -275,9 +275,8 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    paddingTop: Platform.OS === 'web' ? 0 : 40, // Add padding for mobile
+    backgroundColor: '#fff',
   },
   modalContainer: {
     flex: 1,
@@ -285,12 +284,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   modal: {
-    height: '80%',
-    width: '80%',
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    alignSelf: 'flex-start', // Same modal style as before
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   usernameText: {
     fontSize: 20,
