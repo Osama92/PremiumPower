@@ -39,7 +39,7 @@ export default function Index() {
 
           // Conditionally navigate based on the designation
           if (designation === 'Admin') {
-            router.push('/masterAdmin');
+            router.push('/(tabs)');
           } else {
             router.push('/(tabs)');
           }
