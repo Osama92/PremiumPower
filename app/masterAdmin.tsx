@@ -40,6 +40,7 @@ export default function masterAdmin() {
         location, // Added location to Firebase document
         createdBy: auth.currentUser?.email ?? 'unknown', // You can track the user who created this if needed
         createdAt: new Date(),
+        email: email
       });
 
       Alert.alert('Success', 'User created successfully!');
@@ -76,7 +77,7 @@ export default function masterAdmin() {
           placeholder="Enter Email"
           placeholderTextColor="#00443F"
           onChangeText={setEmail}
-          value={username}
+          value={email}
         />
 
         <TextInput
