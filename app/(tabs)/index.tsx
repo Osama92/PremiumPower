@@ -8,6 +8,7 @@ import { Link, useRouter } from 'expo-router';
 export default function HomeScreen() {
   const [isMenuVisible, setMenuVisible] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
+  const [designation, setDesignation] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -26,6 +27,7 @@ export default function HomeScreen() {
             querySnapshot.forEach((doc) => {
               const userData = doc.data();
               if (userData?.username) {
+                setDesignation(userData?.designation);
                 setUsername(userData.username);
               } else {
                 Alert.alert('Error', 'No username found for this user.');
@@ -63,7 +65,7 @@ export default function HomeScreen() {
     setMenuVisible(!isMenuVisible);
   };
 
-    const closeModalAndNavigate = (path: string) => {
+    const closeModalAndNavigate = (path: any) => {
       setMenuVisible(false); // Close modal
       router.push(path); // Navigate to the selected path
     };
@@ -101,6 +103,16 @@ export default function HomeScreen() {
             <Pressable style={styles.menuItem} onPress={handleSignOut}>
               <Text style={styles.menuText}>Sign Out</Text>
             </Pressable>
+
+            {/* Admin Menu */}
+            {designation === 'Admin' && (
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => closeModalAndNavigate('/masterAdmin')}
+              >
+                <Text style={styles.menuText}>Create User</Text>
+              </TouchableOpacity>
+            )}
 
             {/* Close Button */}
             <Pressable style={styles.closeButton} onPress={toggleMenu}>
