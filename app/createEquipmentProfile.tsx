@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,9 @@ import {
   StyleSheet,
   Alert,
   Image,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
@@ -79,7 +82,7 @@ export default function CreateEquipmentProfile() {
       });
 
       Alert.alert('Success', 'Equipment profile created successfully!');
-      router.push('/profile'); // Redirect after creation
+      router.push('/_sitemap'); // Redirect after creation
     } catch (error) {
       console.error('Error creating profile:', error);
       Alert.alert('Error', 'Failed to create equipment profile.');
@@ -89,72 +92,80 @@ export default function CreateEquipmentProfile() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Create Equipment Profile</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={100} // Adjust this value depending on your layout
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.title}>Create Equipment Profile</Text>
 
-      <TouchableOpacity onPress={handleImagePick} style={styles.imagePicker}>
-        {image ? (
-          <Image source={{ uri: image }} style={styles.imagePreview} />
-        ) : (
-          <Text>Select an Image</Text>
-        )}
-      </TouchableOpacity>
+        <TouchableOpacity onPress={handleImagePick} style={styles.imagePicker}>
+          {image ? (
+            <Image source={{ uri: image }} style={styles.imagePreview} />
+          ) : (
+            <Text>Select an Image</Text>
+          )}
+        </TouchableOpacity>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Generator Type"
-        value={generatorType}
-        onChangeText={setGeneratorType}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Generator Type"
+          value={generatorType}
+          onChangeText={setGeneratorType}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="KVA"
-        keyboardType="numeric"
-        value={kva}
-        onChangeText={setKva}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="KVA"
+          keyboardType="numeric"
+          value={kva}
+          onChangeText={setKva}
+        />
 
-      <Picker
-        selectedValue={fuelType}
-        onValueChange={(itemValue) => setFuelType(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="Diesel" value="Diesel" />
-        <Picker.Item label="Petrol" value="Petrol" />
-      </Picker>
+        <Picker
+          selectedValue={fuelType}
+          onValueChange={(itemValue) => setFuelType(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Diesel" value="Diesel" />
+          <Picker.Item label="Petrol" value="Petrol" />
+        </Picker>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Location"
-        value={location}
-        onChangeText={setLocation}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Location"
+          value={location}
+          onChangeText={setLocation}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Year"
-        keyboardType="numeric"
-        value={year}
-        onChangeText={setYear}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Year"
+          keyboardType="numeric"
+          value={year}
+          onChangeText={setYear}
+        />
 
-      <TouchableOpacity
-        style={[styles.button, uploading ? styles.disabledButton : null]}
-        onPress={handleCreateProfile}
-        disabled={uploading}
-      >
-        <Text style={styles.buttonText}>{uploading ? 'Uploading...' : 'Create Profile'}</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+          style={[styles.button, uploading ? styles.disabledButton : null]}
+          onPress={handleCreateProfile}
+          disabled={uploading}
+        >
+          <Text style={styles.buttonText}>{uploading ? 'Uploading...' : 'Create Profile'}</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#fff',
+  },
+  scrollContainer: {
+    padding: 20,
   },
   title: {
     fontSize: 24,

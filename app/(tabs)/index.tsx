@@ -95,7 +95,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
 
             {/* Create a Profile for My Equipment */}
-            <TouchableOpacity  style={styles.menuItem} onPress={()=>closeModalAndNavigate('/create-equipment-profile')}>
+            <TouchableOpacity  style={styles.menuItem} onPress={()=>closeModalAndNavigate('/createEquipmentProfile')}>
               <Text style={styles.menuText}>Create a Profile for My Equipment</Text>
             </TouchableOpacity>
 
