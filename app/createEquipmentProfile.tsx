@@ -69,7 +69,7 @@ export default function CreateEquipmentProfile() {
 
       // Store data in Firestore
       const firestore = getFirestore();
-      const profileRef = collection(firestore, 'EquipmentProfile');
+      const profileRef = collection(firestore, 'Equipment Profile');
       await addDoc(profileRef, {
         email: user.email,
         generatorType,

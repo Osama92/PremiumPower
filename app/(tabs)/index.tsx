@@ -90,7 +90,7 @@ export default function HomeScreen() {
         <View style={styles.menuContainer}>
           <View style={styles.menu}>
             {/* My Profile */}
-            <TouchableOpacity style={styles.menuItem} onPress={()=>closeModalAndNavigate('/my-profile')}>
+            <TouchableOpacity style={styles.menuItem} onPress={()=>closeModalAndNavigate('/viewEditProfile')}>
               <Text style={styles.menuText}>My Profile</Text>
             </TouchableOpacity>
 
