@@ -1,183 +1,156 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  Image,
-  TouchableOpacity,
-  Alert,
-  ScrollView,
-  Platform,
-  KeyboardAvoidingView,
-} from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TextInput, Button, ActivityIndicator, ScrollView, StyleSheet, RefreshControl, Image, Alert } from 'react-native';
+import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  updateDoc,
-} from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import * as ImagePicker from 'expo-image-picker';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 
-export default function ViewEditProfile() {
-  const auth = getAuth();
-  const user = auth.currentUser;
-
+export default function EquipmentProfile() {
+  const [equipmentProfile, setEquipmentProfile] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [generatorType, setGeneratorType] = useState('');
   const [kva, setKva] = useState('');
   const [fuelType, setFuelType] = useState('');
   const [location, setLocation] = useState('');
   const [year, setYear] = useState('');
-  const [image, setImage] = useState<string | null>(null);
-  const [profileId, setProfileId] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
+  const fetchProfile = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
         const firestore = getFirestore();
-        const profileRef = doc(firestore, 'Equipment Profile', user?.email ?? '');
-        const profileSnapshot = await getDoc(profileRef);
+        const q = query(collection(firestore, 'Equipment Profile'), where('email', '==', user.email));
+        const querySnapshot = await getDocs(q);
 
-        if (profileSnapshot.exists()) {
-          const data = profileSnapshot.data();
-          setGeneratorType(data?.generatorType);
-          setKva(data?.kva);
-          setFuelType(data?.fuelType);
-          setLocation(data?.location);
-          setYear(data?.year);
-          setImage(data?.imageUrl);
-          setProfileId(profileSnapshot.id);
+        if (!querySnapshot.empty) {
+          const profileData = querySnapshot.docs[0].data();
+          setEquipmentProfile(profileData);
+          setGeneratorType(profileData.generatorType);
+          setKva(profileData.kva);
+          setFuelType(profileData.fuelType);
+          setLocation(profileData.location);
+          setYear(profileData.year);
+
+          // Fetch the image URL from Firebase Storage
+          if (profileData.image) {
+            const storage = getStorage();
+            const imageRef = ref(storage, profileData.image);
+            const url = await getDownloadURL(imageRef);
+            setImageUrl(url);
+          }
         } else {
-          Alert.alert('Error', 'No profile found.');
+          Alert.alert('No Profile Found', 'No equipment profile found for the current user.');
         }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
+      } else {
+        Alert.alert('Error', 'User is not authenticated.');
       }
-    };
-
-    fetchProfile();
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      Alert.alert('Error', 'Failed to fetch profile. Please try again later.');
+    } finally {
+      setIsLoading(false);
+      setRefreshing(false);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchProfile();
+  };
+
   const handleUpdateProfile = async () => {
-    if (!generatorType || !kva || !fuelType || !location || !year) {
-      Alert.alert('Error', 'Please fill out all fields.');
-      return;
-    }
+    if (equipmentProfile) {
+      try {
+        const firestore = getFirestore();
+        const docRef = doc(firestore, 'Equipment Profile', equipmentProfile.id);
 
-    setUploading(true);
+        await updateDoc(docRef, {
+          generatorType,
+          kva,
+          fuelType,
+          location,
+          year,
+        });
 
-    try {
-      const firestore = getFirestore();
-      const profileRef = doc(firestore, 'Equipment Profile', profileId ?? '');
-
-      let downloadURL = image; // Keep the old image URL unless a new one is uploaded
-
-      if (image && typeof image !== 'string') {
-        // If a new image is selected
-        const storage = getStorage();
-        const storageRef = ref(storage, `equipmentImages/${user?.uid}/${Date.now()}.jpg`);
-        const imgBlob = await fetch(image).then((res) => res.blob());
-        await uploadBytes(storageRef, imgBlob);
-        downloadURL = await getDownloadURL(storageRef);
+        Alert.alert('Success', 'Profile updated successfully!');
+        fetchProfile(); // Refresh data after update
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        Alert.alert('Error', 'Failed to update profile.');
       }
-
-      await updateDoc(profileRef, {
-        generatorType,
-        kva,
-        fuelType,
-        location,
-        year,
-        imageUrl: downloadURL,
-      });
-
-      Alert.alert('Success', 'Profile updated successfully!');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      Alert.alert('Error', 'Failed to update profile.');
-    } finally {
-      setUploading(false);
     }
   };
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.5,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri); // Set the new image URI
-    }
-  };
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={{ flex: 1 }}
+    <ScrollView
+      style={styles.container}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
     >
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 20 }}>
-          Edit Equipment Profile
-        </Text>
+      <View style={styles.profileContainer}>
+        {imageUrl && <Image source={{ uri: imageUrl }} style={styles.image} />}
+        <Text style={styles.label}>Generator Type:</Text>
+        <TextInput style={styles.input} value={generatorType} onChangeText={setGeneratorType} />
 
-        <Text>Generator Type</Text>
-        <TextInput
-          style={{ borderWidth: 1, padding: 10, marginBottom: 15 }}
-          value={generatorType}
-          onChangeText={setGeneratorType}
-        />
+        <Text style={styles.label}>KVA:</Text>
+        <TextInput style={styles.input} value={kva} onChangeText={setKva} />
 
-        <Text>KVA</Text>
-        <TextInput
-          style={{ borderWidth: 1, padding: 10, marginBottom: 15 }}
-          value={kva}
-          onChangeText={setKva}
-        />
+        <Text style={styles.label}>Fuel Type:</Text>
+        <TextInput style={styles.input} value={fuelType} onChangeText={setFuelType} />
 
-        <Text>Fuel Type</Text>
-        <TextInput
-          style={{ borderWidth: 1, padding: 10, marginBottom: 15 }}
-          value={fuelType}
-          onChangeText={setFuelType}
-          placeholder="Diesel or Petrol"
-        />
+        <Text style={styles.label}>Location:</Text>
+        <TextInput style={styles.input} value={location} onChangeText={setLocation} />
 
-        <Text>Location</Text>
-        <TextInput
-          style={{ borderWidth: 1, padding: 10, marginBottom: 15 }}
-          value={location}
-          onChangeText={setLocation}
-        />
+        <Text style={styles.label}>Year:</Text>
+        <TextInput style={styles.input} value={year} onChangeText={setYear} />
 
-        <Text>Year</Text>
-        <TextInput
-          style={{ borderWidth: 1, padding: 10, marginBottom: 15 }}
-          value={year}
-          onChangeText={setYear}
-        />
-
-        <Text>Image</Text>
-        {image && (
-          <Image
-            source={{ uri: image }}
-            style={{ width: 100, height: 100, marginBottom: 15 }}
-          />
-        )}
-        <TouchableOpacity onPress={pickImage}>
-          <Text style={{ color: 'blue' }}>Pick an image</Text>
-        </TouchableOpacity>
-
-        <Button
-          title={uploading ? 'Updating...' : 'Update Profile'}
-          onPress={handleUpdateProfile}
-          disabled={uploading}
-        />
-      </ScrollView>
-    </KeyboardAvoidingView>
+        <Button title="Update Profile" onPress={handleUpdateProfile} />
+      </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  profileContainer: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 16,
+    marginVertical: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 8,
+    borderRadius: 4,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: 200,
+    height: 200,
+    marginBottom: 16,
+    alignSelf: 'center',
+  },
+});
