@@ -43,9 +43,9 @@ export default function ViewProfile() {
         setYear(profileData.year || '');
   
         // Fetch the image URL if stored in Firebase Storage
-        if (profileData.imagePath) {
+        if (profileData.imageUrl) {
           const storage = getStorage();
-          const imageRef = ref(storage, profileData.imagePath);
+          const imageRef = ref(storage, profileData.imageUrl);
           const url = await getDownloadURL(imageRef);
           setImageUrl(url);
         }
