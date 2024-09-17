@@ -1,55 +1,263 @@
+// import React, { useState, useEffect } from 'react';
+// import { View, Text, Pressable, StyleSheet, Alert, TouchableOpacity, Modal, Platform } from 'react-native';
+// import { getAuth, signOut } from 'firebase/auth';
+// import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+// import { MaterialIcons } from '@expo/vector-icons';
+// import { Link, useRouter } from 'expo-router';
+
+// export default function HomeScreen() {
+//   const [isMenuVisible, setMenuVisible] = useState(false);
+//   const [username, setUsername] = useState<string | null>(null);
+//   const [designation, setDesignation] = useState<string | null>(null);
+//   const router = useRouter();
+
+//   useEffect(() => {
+//     const fetchUsername = async () => {
+//       try {
+//         const auth = getAuth();
+//         const user = auth.currentUser;
+
+//         if (user) {
+//           const firestore = getFirestore();
+//           const usersRef = collection(firestore, 'Users');
+//           const q = query(usersRef, where('email', '==', user.email)); // Assuming the 'Users' collection has an 'email' field
+//           const querySnapshot = await getDocs(q);
+
+//           if (!querySnapshot.empty) {
+//             querySnapshot.forEach((doc) => {
+//               const userData = doc.data();
+//               if (userData?.username) {
+//                 setDesignation(userData?.designation);
+//                 setUsername(userData.username);
+//               } else {
+//                 Alert.alert('Error', 'No username found for this user.');
+//               }
+//             });
+//           } else {
+//             Alert.alert('Error', 'No such user found in the Users collection.');
+//           }
+//         } else {
+//           Alert.alert('Error', 'User is not authenticated.');
+//         }
+//       } catch (error) {
+//         console.error('Error fetching username:', error);
+//         Alert.alert('Error', 'Failed to fetch user data. Please try again later.');
+//       }
+//     };
+
+//     fetchUsername();
+//   }, []);
+
+//   const handleSignOut = () => {
+//     const auth = getAuth();
+//     signOut(auth)
+//       .then(() => {
+//         Alert.alert('Signed Out', 'You have been signed out.');
+//         router.replace('/'); // Redirect to login screen after sign out
+//       })
+//       .catch((error) => {
+//         Alert.alert('Error', 'Sign out failed. Please try again.');
+//         console.error('Sign out error:', error);
+//       });
+//   };
+
+//   const toggleMenu = () => {
+//     setMenuVisible(!isMenuVisible);
+//   };
+
+//     const closeModalAndNavigate = (path: any) => {
+//       setMenuVisible(false); // Close modal
+//       router.push(path); // Navigate to the selected path
+//     };
+
+//   return (
+//     <View style={styles.container}>
+//       {/* Header with Hamburger Icon */}
+//       <View style={styles.header}>
+//         <TouchableOpacity onPress={toggleMenu}>
+//           <MaterialIcons name="menu" size={30} color="black" />
+//         </TouchableOpacity>
+//         <Text style={styles.headerText}>Welcome, {username}!</Text>
+//       </View>
+
+//       {/* Side Menu Modal */}
+//       <Modal
+//         visible={isMenuVisible}
+//         animationType="slide"
+//         transparent={true}
+//         onRequestClose={toggleMenu}
+//       >
+//         <View style={styles.menuContainer}>
+//           <View style={styles.menu}>
+//             <View style={{backgroundColor:'', width: '80%', height:'20%'}}></View>
+//             {designation === "Customer" && (
+//               <>
+//               <TouchableOpacity style={styles.menuItem} onPress={()=>closeModalAndNavigate('/viewEditProfile')}>
+//               <Text style={styles.menuText}>My Profile</Text>
+//             </TouchableOpacity> 
+            
+//             <TouchableOpacity  style={styles.menuItem} onPress={()=>closeModalAndNavigate('/createEquipmentProfile')}>
+//               <Text style={styles.menuText}>Create a Profile for My Equipment</Text>
+//             </TouchableOpacity>
+            
+//             </>
+//             )}
+
+//             {/* Sign Out */}
+//             <Pressable style={styles.menuItem} onPress={handleSignOut}>
+//               <Text style={styles.menuText}>Sign Out</Text>
+//             </Pressable>
+
+//             {/* Admin Menu */}
+//             {designation === 'Admin' && (
+//               <TouchableOpacity
+//                 style={styles.menuItem}
+//                 onPress={() => closeModalAndNavigate('/masterAdmin')}
+//               >
+//                 <Text style={styles.menuText}>Create User</Text>
+//               </TouchableOpacity>
+//             )}
+
+//             {/* Close Button */}
+//             <Pressable style={styles.closeButton} onPress={toggleMenu}>
+//               <Text style={styles.closeButtonText}>Close Menu</Text>
+//             </Pressable>
+//           </View>
+//         </View>
+//       </Modal>
+//     </View>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     paddingTop: Platform.OS === 'web' ? 0 : 40, // Add padding for mobile
+//     backgroundColor: '#fff',
+//   },
+//   header: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     paddingHorizontal: 20,
+//     paddingVertical: 10,
+//     backgroundColor: '#f8f8f8',
+//   },
+//   headerText: {
+//     fontSize: 20,
+//     marginLeft: 20,
+//   },
+//   menuContainer: {
+//     flex: 1,
+//     justifyContent: 'flex-start',
+//     alignItems: 'flex-end',
+//     backgroundColor: 'rgba(0,0,0,0.5)',
+//   },
+//   menu: {
+//     width: '80%', // Menu takes 80% of the screen width
+//     height: '100%',
+//     backgroundColor: '#fff',
+//     padding: 20,
+//     justifyContent: 'center',
+//   },
+//   menuItem: {
+//     marginVertical: 10,
+//     paddingVertical: 15,
+//     borderBottomColor: '#ccc',
+//     borderBottomWidth: 1,
+//   },
+//   menuText: {
+//     fontSize: 18,
+//   },
+//   closeButton: {
+//     marginTop: 20,
+//     alignSelf: 'flex-start',
+//   },
+//   closeButtonText: {
+//     fontSize: 16,
+//     color: '#007BFF',
+//   },
+// });
+
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert, TouchableOpacity, Modal, Platform } from 'react-native';
+import { View, Text, Pressable, FlatList, StyleSheet, Alert, TouchableOpacity, Modal, RefreshControl, Platform } from 'react-native';
 import { getAuth, signOut } from 'firebase/auth';
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 export default function HomeScreen() {
   const [isMenuVisible, setMenuVisible] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
   const [designation, setDesignation] = useState<string | null>(null);
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [completedJobs, setCompletedJobs] = useState<any[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchUsername = async () => {
-      try {
-        const auth = getAuth();
-        const user = auth.currentUser;
+  const auth = getAuth();
+  const firestore = getFirestore();
 
-        if (user) {
-          const firestore = getFirestore();
-          const usersRef = collection(firestore, 'Users');
-          const q = query(usersRef, where('email', '==', user.email)); // Assuming the 'Users' collection has an 'email' field
-          const querySnapshot = await getDocs(q);
+  // Fetch user data and jobs
+  const fetchUserAndJobs = async () => {
+    try {
+      const user = auth.currentUser;
 
-          if (!querySnapshot.empty) {
-            querySnapshot.forEach((doc) => {
-              const userData = doc.data();
-              if (userData?.username) {
-                setDesignation(userData?.designation);
-                setUsername(userData.username);
-              } else {
-                Alert.alert('Error', 'No username found for this user.');
-              }
-            });
-          } else {
-            Alert.alert('Error', 'No such user found in the Users collection.');
-          }
-        } else {
-          Alert.alert('Error', 'User is not authenticated.');
+      if (user) {
+        // Fetch user data from Firestore
+        const usersRef = collection(firestore, 'Users');
+        const q = query(usersRef, where('email', '==', user.email));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          querySnapshot.forEach((doc) => {
+            const userData = doc.data();
+            setDesignation(userData?.designation);
+            setUsername(userData.username);
+          });
+
+          // Fetch jobs created by the user
+          const jobsRef = collection(firestore, 'Jobs');
+          const jobsQuery = query(jobsRef, where('createdBy', '==', user.email));
+          const jobsSnapshot = await getDocs(jobsQuery);
+
+          const fetchedJobs: any[] = [];
+          const completed: any[] = [];
+
+          jobsSnapshot.forEach((doc) => {
+            const job = doc.data();
+            if (job.status === 'completed') {
+              completed.push({ id: doc.id, ...job });
+            } else {
+              fetchedJobs.push({ id: doc.id, ...job });
+            }
+          });
+
+          setJobs(fetchedJobs);
+          setCompletedJobs(completed);
         }
-      } catch (error) {
-        console.error('Error fetching username:', error);
-        Alert.alert('Error', 'Failed to fetch user data. Please try again later.');
+      } else {
+        Alert.alert('Error', 'User is not authenticated.');
       }
-    };
+    } catch (error) {
+      console.error('Error fetching user and jobs:', error);
+      Alert.alert('Error', 'Failed to fetch data. Please try again later.');
+    }
+  };
 
-    fetchUsername();
+  // Fetch data when the component mounts
+  useEffect(() => {
+    fetchUserAndJobs();
   }, []);
 
+  // Refresh jobs
+  const refreshJobs = async () => {
+    setRefreshing(true);
+    await fetchUserAndJobs();
+    setRefreshing(false);
+  };
+
+  // Sign out function
   const handleSignOut = () => {
-    const auth = getAuth();
     signOut(auth)
       .then(() => {
         Alert.alert('Signed Out', 'You have been signed out.');
@@ -61,24 +269,70 @@ export default function HomeScreen() {
       });
   };
 
+  // Toggle side menu
   const toggleMenu = () => {
     setMenuVisible(!isMenuVisible);
   };
 
-    const closeModalAndNavigate = (path: any) => {
-      setMenuVisible(false); // Close modal
-      router.push(path); // Navigate to the selected path
-    };
+  // Close modal and navigate
+  const closeModalAndNavigate = (path: string) => {
+    setMenuVisible(false);
+    router.push('/(tabs)');
+  };
+
+  // Mark job as completed
+  const markJobAsCompleted = async (jobId: string) => {
+    try {
+      const jobRef = doc(firestore, 'Jobs', jobId);
+      await updateDoc(jobRef, {
+        status: 'completed',
+      });
+      Alert.alert('Success', 'Job marked as completed.');
+      refreshJobs();
+    } catch (error) {
+      console.error('Error marking job as completed:', error);
+      Alert.alert('Error', 'Failed to update job status.');
+    }
+  };
+
+  // Render each job item
+  const renderJobItem = ({ item }: { item: any }) => (
+    <View style={styles.jobItem}>
+      <Text>{item.description}</Text>
+      <Text>Status: {item.status}</Text>
+      {item.status !== 'completed' && (
+        <Pressable onPress={() => markJobAsCompleted(item.id)}>
+          <Text style={styles.completeButton}>Mark as Completed</Text>
+        </Pressable>
+      )}
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      {/* Header with Hamburger Icon */}
       <View style={styles.header}>
         <TouchableOpacity onPress={toggleMenu}>
           <MaterialIcons name="menu" size={30} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Welcome, {username}!</Text>
       </View>
+
+      {/* Jobs List */}
+      <Text style={styles.sectionTitle}>Pending Jobs</Text>
+      <FlatList
+        data={jobs}
+        renderItem={renderJobItem}
+        keyExtractor={(item) => item.id}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshJobs} />}
+      />
+
+      <Text style={styles.sectionTitle}>Completed Jobs</Text>
+      <FlatList
+        data={completedJobs}
+        renderItem={renderJobItem}
+        keyExtractor={(item) => item.id}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshJobs} />}
+      />
 
       {/* Side Menu Modal */}
       <Modal
@@ -89,18 +343,17 @@ export default function HomeScreen() {
       >
         <View style={styles.menuContainer}>
           <View style={styles.menu}>
-            <View style={{backgroundColor:'', width: '80%', height:'20%'}}></View>
+            <View style={{ backgroundColor: '', width: '80%', height: '20%' }}></View>
             {designation === "Customer" && (
               <>
-              <TouchableOpacity style={styles.menuItem} onPress={()=>closeModalAndNavigate('/viewEditProfile')}>
-              <Text style={styles.menuText}>My Profile</Text>
-            </TouchableOpacity> 
-            
-            <TouchableOpacity  style={styles.menuItem} onPress={()=>closeModalAndNavigate('/createEquipmentProfile')}>
-              <Text style={styles.menuText}>Create a Profile for My Equipment</Text>
-            </TouchableOpacity>
-            
-            </>
+                <TouchableOpacity style={styles.menuItem} onPress={() => closeModalAndNavigate('/viewEditProfile')}>
+                  <Text style={styles.menuText}>My Profile</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.menuItem} onPress={() => closeModalAndNavigate('/createEquipmentProfile')}>
+                  <Text style={styles.menuText}>Create a Profile for My Equipment</Text>
+                </TouchableOpacity>
+              </>
             )}
 
             {/* Sign Out */}
@@ -110,10 +363,7 @@ export default function HomeScreen() {
 
             {/* Admin Menu */}
             {designation === 'Admin' && (
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => closeModalAndNavigate('/masterAdmin')}
-              >
+              <TouchableOpacity style={styles.menuItem} onPress={() => closeModalAndNavigate('/masterAdmin')}>
                 <Text style={styles.menuText}>Create User</Text>
               </TouchableOpacity>
             )}
@@ -132,7 +382,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Platform.OS === 'web' ? 0 : 40, // Add padding for mobile
+    paddingTop: Platform.OS === 'web' ? 0 : 40,
     backgroundColor: '#fff',
   },
   header: {
@@ -146,6 +396,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginLeft: 20,
   },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    paddingHorizontal: 20,
+    marginTop: 20,
+  },
+  jobItem: {
+    padding: 20,
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1,
+  },
+  completeButton: {
+    color: 'green',
+    marginTop: 10,
+  },
   menuContainer: {
     flex: 1,
     justifyContent: 'flex-start',
@@ -153,7 +418,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   menu: {
-    width: '80%', // Menu takes 80% of the screen width
+    width: '80%',
     height: '100%',
     backgroundColor: '#fff',
     padding: 20,
@@ -177,4 +442,3 @@ const styles = StyleSheet.create({
     color: '#007BFF',
   },
 });
-
