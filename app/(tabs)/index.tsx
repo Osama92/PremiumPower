@@ -95,9 +95,9 @@ export default function HomeScreen() {
   };
 
   // Close modal and navigate
-  const closeModalAndNavigate = (path: string) => {
+  const closeModalAndNavigate = (path: any) => {
     setMenuVisible(false);
-    router.push('/(tabs)');
+    router.push(path);
   };
 
   // Mark job as completed
@@ -201,7 +201,7 @@ export default function HomeScreen() {
                 <Text style={styles.menuText}>Create User</Text>
               </TouchableOpacity>
               
-              <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/jobManagementScreen')}>
+              <TouchableOpacity style={styles.menuItem} onPress={() => closeModalAndNavigate('/jobManagementScreen')}>
                 <Text style={styles.menuText}>View Jobs</Text>
               </TouchableOpacity>
               </>
