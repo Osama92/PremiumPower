@@ -10,6 +10,7 @@ export default function RootLayout() {
       <Stack.Screen name="recoveryScreen" options={{ headerShown: false }} />
       <Stack.Screen name="masterAdmin" options={{ headerShown: false }} />
       <Stack.Screen name="createJob" options={{ headerShown: false }} />
+      <Stack.Screen name="jobManagementScreen" options={{ headerShown: false }} />
     </Stack>
   );
 }

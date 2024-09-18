@@ -194,10 +194,17 @@ export default function HomeScreen() {
             </Pressable>
 
             {/* Admin Menu */}
+            
             {designation === 'Admin' && (
+              <>
               <TouchableOpacity style={styles.menuItem} onPress={() => closeModalAndNavigate('/masterAdmin')}>
                 <Text style={styles.menuText}>Create User</Text>
               </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/jobManagementScreen')}>
+                <Text style={styles.menuText}>View Jobs</Text>
+              </TouchableOpacity>
+              </>
             )}
 
             {/* Close Button */}
