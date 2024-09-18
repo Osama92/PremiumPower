@@ -118,7 +118,7 @@ export default function HomeScreen() {
   // Render each job item
   const renderJobItem = ({ item }: { item: any }) => (
     <View style={styles.jobItem}>
-      <Text>{item.description}</Text>
+      <Text>{item.jobType}</Text>
       <Text>Status: {item.status}</Text>
       {item.status !== 'completed' && (
         <Pressable onPress={() => markJobAsCompleted(item.id)}>
@@ -154,7 +154,7 @@ export default function HomeScreen() {
       <FlatList
         data={jobs}
         renderItem={renderJobItem}
-        keyExtractor={(item) => item.jobType}
+        keyExtractor={(item) => item.id}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshJobs} />}
       />
 
