@@ -44,8 +44,8 @@ export default function CreateJobScreen() {
         await addDoc(jobRef, {
           jobType,
           kvaRange: selectedKVA || null,
-          userId: user.uid,
-          email: user.email,
+          createdBy: user.email,
+          status: 'pending',
           createdAt: new Date(),
         });
 

@@ -141,11 +141,11 @@ export default function HomeScreen() {
       <View style={styles.createJobContainer}>
         {designation === 'Customer' && (
           <TouchableOpacity
-            style={styles.createJobButton}
-            onPress={() => closeModalAndNavigate('/createJob')}
-          >
-            <Text style={styles.createJobText}>Create Job</Text>
-          </TouchableOpacity>
+          style={styles.createJobButton}
+          onPress={() => router.push('/createJob')} // Directly navigating to the Create Job screen
+        >
+          <Text style={styles.createJobText}>Create Job</Text>
+        </TouchableOpacity>
         )}
       </View>
 
@@ -154,7 +154,7 @@ export default function HomeScreen() {
       <FlatList
         data={jobs}
         renderItem={renderJobItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.jobType}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshJobs} />}
       />
 
