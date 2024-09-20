@@ -1,150 +1,5 @@
-// import React, { useState, useEffect } from 'react';
-// import { View, Text, FlatList, StyleSheet, Alert, TouchableOpacity } from 'react-native';
-// import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
-// import { getAuth } from 'firebase/auth';
-// import { Picker } from '@react-native-picker/picker';
-
-// interface Job {
-//   id: string;
-//   createdBy: string;
-//   createdAt: string;
-//   status: string;
-// }
-
-// interface User {
-//   id: string;
-//   name: string;
-// }
-
-// const jobManagementScreen = () => {
-//   const [jobs, setJobs] = useState<Job[]>([]);
-//   const [engineers, setEngineers] = useState<User[]>([]);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     const fetchJobs = async () => {
-//       try {
-//         const firestore = getFirestore();
-//         const jobsRef = collection(firestore, 'Jobs');
-//         const querySnapshot = await getDocs(jobsRef);
-
-//         const fetchedJobs: Job[] = [];
-//         querySnapshot.forEach((doc) => {
-//           const jobData = doc.data();
-//           fetchedJobs.push({
-//             id: doc.id,
-//             createdBy: jobData.createdBy,
-//             createdAt: jobData.createdAt,
-//             status: jobData.status,
-//           });
-//         });
-
-//         setJobs(fetchedJobs);
-//       } catch (error) {
-//         console.error('Error fetching jobs:', error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     const fetchEngineers = async () => {
-//       try {
-//         const firestore = getFirestore();
-//         const usersRef = collection(firestore, 'Users');
-//         const q = query(usersRef, where('designation', '==', 'Engineer'));
-//         const querySnapshot = await getDocs(q);
-
-//         const fetchedEngineers: User[] = [];
-//         querySnapshot.forEach((doc) => {
-//           const userData = doc.data();
-//           fetchedEngineers.push({
-//             id: doc.id,
-//             name: userData.username,
-//           });
-//         });
-
-//         setEngineers(fetchedEngineers);
-//       } catch (error) {
-//         console.error('Error fetching engineers:', error);
-//       }
-//     };
-
-//     fetchJobs();
-//     fetchEngineers();
-//   }, []);
-
-//   const handleStatusChange = async (jobId: string, status: string) => {
-//     try {
-//       const firestore = getFirestore();
-//       const jobRef = doc(firestore, 'Jobs', jobId);
-//       await updateDoc(jobRef, { status });
-//       Alert.alert('Success', 'Job status updated successfully.');
-//     } catch (error) {
-//       console.error('Error updating job status:', error);
-//       Alert.alert('Error', 'Failed to update job status.');
-//     }
-//   };
-
-//   if (loading) {
-//     return (
-//       <View style={styles.container}>
-//         <Text>Loading...</Text>
-//       </View>
-//     );
-//   }
-
-//   return (
-//     <View style={styles.container}>
-//       <FlatList
-//         data={jobs}
-//         keyExtractor={(item) => item.id}
-//         renderItem={({ item }) => (
-//           <View style={styles.jobRow}>
-//             <Text style={styles.text}>{item.createdBy}</Text>
-//             <Text style={styles.text}>{item.createdAt}</Text>
-//             <View style={styles.pickerContainer}>
-//               <Picker
-//                 selectedValue={item.status}
-//                 onValueChange={(value: any) => handleStatusChange(item.id, value)}
-//               >
-//                 <Picker.Item label="Awaiting Approval" value="Awaiting Approval" />
-//                 <Picker.Item label="Approved" value="Approved" />
-//                 <Picker.Item label="Assigned to" value="Assigned to" />
-//               </Picker>
-//             </View>
-//           </View>
-//         )}
-//       />
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     padding: 20,
-//   },
-//   jobRow: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     alignItems: 'center',
-//     paddingVertical: 10,
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#ccc',
-//   },
-//   text: {
-//     fontSize: 16,
-//   },
-//   pickerContainer: {
-//     width: 200,
-//   },
-// });
-
-// export default jobManagementScreen;
-
-
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Alert, RefreshControl } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Alert, RefreshControl, Button } from 'react-native';
 import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { Picker } from '@react-native-picker/picker';
 
@@ -153,6 +8,7 @@ interface Job {
   createdBy: string;
   createdAt: Date;
   status: string;
+  assignedTo?: string;
 }
 
 interface User {
@@ -165,6 +21,9 @@ const jobManagementScreen = () => {
   const [engineers, setEngineers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const [jobStatus, setJobStatus] = useState<{ [jobId: string]: string }>({});
+  const [selectedEngineer, setSelectedEngineer] = useState<{ [jobId: string]: string }>({});
 
   useEffect(() => {
     fetchJobs();
@@ -184,8 +43,9 @@ const jobManagementScreen = () => {
         fetchedJobs.push({
           id: doc.id,
           createdBy: jobData.createdBy,
-          createdAt: new Date(jobData.createdAt.seconds * 1000), // Convert Firestore Timestamp to Date
+          createdAt: new Date(jobData.createdAt.seconds * 1000),
           status: jobData.status,
+          assignedTo: jobData.assignedTo,
         });
       });
 
@@ -219,16 +79,31 @@ const jobManagementScreen = () => {
     }
   };
 
-  const handleStatusChange = async (jobId: string, status: string) => {
+  const handleSave = async (jobId: string) => {
+    const assignedEngineerId = selectedEngineer[jobId];
+    const assignedEngineer = engineers.find((eng) => eng.id === assignedEngineerId);
+    const status = jobStatus[jobId] || 'Awaiting Approval';
+
+    if (!assignedEngineer && status === 'Assigned to') {
+      Alert.alert('Error', 'Please assign an engineer.');
+      return;
+    }
+
     try {
       const firestore = getFirestore();
       const jobRef = doc(firestore, 'Jobs', jobId);
-      await updateDoc(jobRef, { status });
-      Alert.alert('Success', 'Job status updated successfully.');
-      fetchJobs(); // Refresh jobs after status update
+
+      const updateData = {
+        status,
+        assignedTo: assignedEngineer ? assignedEngineer.name : '',
+      };
+
+      await updateDoc(jobRef, updateData);
+      Alert.alert('Success', 'Job updated successfully.');
+      fetchJobs(); // Refresh jobs after update
     } catch (error) {
-      console.error('Error updating job status:', error);
-      Alert.alert('Error', 'Failed to update job status.');
+      console.error('Error updating job:', error);
+      Alert.alert('Error', 'Failed to update job.');
     }
   };
 
@@ -238,22 +113,59 @@ const jobManagementScreen = () => {
     setRefreshing(false);
   };
 
-  const renderJobItem = ({ item }: { item: Job }) => (
-    <View style={styles.jobRow}>
-      <Text style={styles.text}>{item.createdBy}</Text>
-      <Text style={styles.text}>{item.createdAt.toDateString()}</Text> 
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={item.status}
-          onValueChange={(value: string) => handleStatusChange(item.id, value)}
-        >
-          <Picker.Item label="Awaiting Approval" value="Awaiting Approval" />
-          <Picker.Item label="Approved" value="Approved" />
-          <Picker.Item label="Assigned to" value="Assigned to" />
-        </Picker>
+  const renderJobItem = ({ item }: { item: Job }) => {
+    const isAssignedTo = jobStatus[item.id] === 'Assigned to';
+
+    return (
+      <View style={styles.jobRow}>
+        <Text style={styles.text}>{item.createdBy}</Text>
+        <Text style={styles.text}>{item.createdAt.toDateString()}</Text>
+        
+        {/* Job Status Picker */}
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={jobStatus[item.id] || item.status}
+            onValueChange={(value: string) => {
+              setJobStatus({ ...jobStatus, [item.id]: value });
+
+              if (value === 'Assigned to') {
+                setSelectedEngineer({ ...selectedEngineer, [item.id]: '' });
+              }
+            }}
+          >
+            <Picker.Item label="Awaiting Approval" value="Awaiting Approval" />
+            <Picker.Item label="Approved" value="Approved" />
+            <Picker.Item label="Assigned to" value="Assigned to" />
+          </Picker>
+        </View>
+
+        {/* Engineer Picker (Conditional) */}
+        {isAssignedTo && (
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={selectedEngineer[item.id]}
+              onValueChange={(engineerId: string) => {
+                setSelectedEngineer({ ...selectedEngineer, [item.id]: engineerId });
+              }}
+            >
+              <Picker.Item label="Select Engineer" value="" />
+              {engineers.map((engineer) => (
+                <Picker.Item key={engineer.id} label={engineer.name} value={engineer.id} />
+              ))}
+            </Picker>
+          </View>
+        )}
+
+        {/* Display Save Button */}
+        <Button title="Save" onPress={() => handleSave(item.id)} />
+
+        {/* Display Assigned Engineer (if exists) */}
+        {item.assignedTo && !isAssignedTo && (
+          <Text style={styles.text}>Assigned to: {item.assignedTo}</Text>
+        )}
       </View>
-    </View>
-  );
+    );
+  };
 
   if (loading) {
     return (
@@ -285,7 +197,6 @@ const styles = StyleSheet.create({
   jobRow: {
     flexDirection: 'column',
     justifyContent: 'space-between',
-    alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
@@ -294,7 +205,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   pickerContainer: {
-    width: '100%',
+    width: 200,
   },
 });
 

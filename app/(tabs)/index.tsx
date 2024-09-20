@@ -132,7 +132,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={toggleMenu}>
-          <MaterialIcons name="menu" size={30} color="black" />
+          <MaterialIcons name="menu" size={30} color="#00443F" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Welcome, {username}!</Text>
       </View>
@@ -229,11 +229,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: '#f8f8f8',
   },
   headerText: {
     fontSize: 20,
     marginLeft: 20,
+    fontWeight: '800'
   },
   sectionTitle: {
     fontSize: 18,
