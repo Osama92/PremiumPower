@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, FlatList, StyleSheet, Alert, TouchableOpacity, Modal, RefreshControl, Platform } from 'react-native';
+import { View, Text, Pressable, FlatList, StyleSheet, Alert, TouchableOpacity, Modal, RefreshControl, Platform, Image } from 'react-native';
 import { getAuth, signOut } from 'firebase/auth';
 import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import {useFonts} from 'expo-font'
 
 export default function HomeScreen() {
+
+  const [loaded] = useFonts({
+    Montserrat: require('../../assets/fonts/Montserrat.ttf'),
+    MontserratBold: require('../../assets/fonts/Montserrat-ExtraBold.ttf'),
+  });
+
   const [isMenuVisible, setMenuVisible] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
   const [designation, setDesignation] = useState<string | null>(null);
@@ -118,10 +125,13 @@ export default function HomeScreen() {
   // Render each job item
   const renderJobItem = ({ item }: { item: any }) => (
     <View style={styles.jobItem}>
-      <Text>{item.jobType}</Text>
+      <View>
+      <Text>Job Type: {item.jobType}</Text>
       <Text>Status: {item.status}</Text>
+      <Text>Assigned To: {item.assignedTo}</Text>
+      </View>
       {item.status !== 'completed' && (
-        <Pressable onPress={() => markJobAsCompleted(item.id)}>
+        <Pressable  style={styles.jobcompletion} onPress={() => markJobAsCompleted(item.id)}>
           <Text style={styles.completeButton}>Mark as Completed</Text>
         </Pressable>
       )}
@@ -130,6 +140,10 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={{height: 80, width: '100%'}}>
+      <Image source={require('../../assets/images/PPS.png')} style={styles.logosize} resizeMode="contain" />
+      </View>
+      
       <View style={styles.header}>
         <TouchableOpacity onPress={toggleMenu}>
           <MaterialIcons name="menu" size={30} color="#00443F" />
@@ -140,12 +154,15 @@ export default function HomeScreen() {
       {/* Create Job Button */}
       <View style={styles.createJobContainer}>
         {designation === 'Customer' && (
+          <>
           <TouchableOpacity
-          style={styles.createJobButton}
           onPress={() => router.push('/createJob')} // Directly navigating to the Create Job screen
         >
-          <Text style={styles.createJobText}>Create Job</Text>
+          <View style={styles.addIcon}><Text style={styles.addIconText}>+</Text></View>
         </TouchableOpacity>
+        <Text style={styles.createJobText}>Create a New Job</Text>
+        
+        </>
         )}
       </View>
 
@@ -175,7 +192,6 @@ export default function HomeScreen() {
       >
         <View style={styles.menuContainer}>
           <View style={styles.menu}>
-            <View style={{ backgroundColor: '', width: '80%', height: '20%' }}></View>
             {designation === "Customer" && (
               <>
                 <TouchableOpacity style={styles.menuItem} onPress={() => closeModalAndNavigate('/viewEditProfile')}>
@@ -230,6 +246,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
+  logosize: {
+    height: '100%',
+    width: 120,
+    marginLeft: 15,
+  },
   headerText: {
     fontSize: 20,
     marginLeft: 20,
@@ -242,26 +263,49 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   createJobContainer: {
+    justifyContent: 'flex-start',
     alignItems: 'center',
     marginVertical: 20,
+    flexDirection: 'row-reverse'
   },
-  createJobButton: {
-    backgroundColor: '#007BFF',
-    padding: 15,
-    borderRadius: 8,
-  },
+ 
   createJobText: {
-    color: '#fff',
-    fontSize: 18,
+    color: '#00443F',
+    fontSize: 14,
+    marginRight: 10
   },
+  addIcon: {
+    width:40,
+    height:40,
+    borderRadius:20,
+    backgroundColor: '#00443F',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight:20
+  },
+  addIconText: {
+    fontWeight: '700',
+    fontSize: 20,
+    color: '#fff'
+  },
+  
   jobItem: {
     padding: 20,
     borderBottomColor: '#ccc',
     borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   completeButton: {
-    color: 'green',
+    color: '#fff',
     marginTop: 10,
+    fontSize: 10,
+    fontFamily: 'Montserrat'
+  },
+  jobcompletion: {
+    backgroundColor: '#00443F',
+    padding: 10,
+    borderRadius: 10
   },
   menuContainer: {
     flex: 1,
@@ -284,6 +328,8 @@ const styles = StyleSheet.create({
   },
   menuText: {
     fontSize: 18,
+    color: '#00443F',
+    fontFamily: 'Montserrat'
   },
   closeButton: {
     marginTop: 20,
