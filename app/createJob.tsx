@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert, Image } from 'react-native';
+import { View, Text, Button, StyleSheet, Alert, Image, TouchableOpacity } from 'react-native';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
+
 
 export default function CreateJobScreen() {
   const [jobType, setJobType] = useState<string | null>(null); // Ensure it's a string or null
@@ -83,6 +84,7 @@ export default function CreateJobScreen() {
 
       {jobType === 'Generator Rental' && (
         <>
+        <View style={styles.generatorRental}>
           <Text style={styles.label}>Select KVA Range:</Text>
           <Picker
             selectedValue={selectedKVA} // string or null
@@ -94,10 +96,13 @@ export default function CreateJobScreen() {
               <Picker.Item key={kva} label={kva} value={kva} />
             ))}
           </Picker>
+          </View>
         </>
       )}
 
-      {/* <Button title="Create Job" onPress={handleSubmit} /> */}
+      <TouchableOpacity style={styles.createJob} onPress={handleSubmit}>
+        <Text>Create Job</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -105,24 +110,38 @@ export default function CreateJobScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingTop: 20,
   },
   label: {
     fontSize: 16,
     marginVertical: 10,
+    marginLeft: 20
   },
   picker: {
     height: 40,
-    marginBottom: 20,
+    marginBottom: 20
   },
   logosize: {
     height: '100%',
     width: 120,
-    //marginLeft: 5,
+    marginLeft: 20
   },
   selectJobView: {
     width: '100%',
-    height: '50%',
-    backgroundColor: 'orange'
+    height: '30%',
+  },
+  generatorRental: {
+    width: '100%',
+    height: '30%'
+  },
+  createJob: {
+    position: 'absolute',
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+    width:'100%',
+    backgroundColor:'orange'
   }
 });
+
