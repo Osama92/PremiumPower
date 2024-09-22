@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, Button, StyleSheet, Alert, Image } from 'react-native';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { Picker } from '@react-native-picker/picker';
@@ -62,6 +62,11 @@ export default function CreateJobScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={{height: 80, width: '100%'}}>
+      <Image source={require('../assets/images/PPS.png')} style={styles.logosize} resizeMode="contain" />
+      </View>
+
+      <View style={styles.selectJobView}>
       <Text style={styles.label}>Select Job Type:</Text>
       <Picker
         selectedValue={jobType} // string or null
@@ -73,6 +78,8 @@ export default function CreateJobScreen() {
         <Picker.Item label="Generator Rental" value="Generator Rental" />
         <Picker.Item label="Generator Servicing" value="Generator Servicing" />
       </Picker>
+      </View>
+      
 
       {jobType === 'Generator Rental' && (
         <>
@@ -90,7 +97,7 @@ export default function CreateJobScreen() {
         </>
       )}
 
-      <Button title="Create Job" onPress={handleSubmit} />
+      {/* <Button title="Create Job" onPress={handleSubmit} /> */}
     </View>
   );
 }
@@ -99,14 +106,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: 'center',
   },
   label: {
     fontSize: 16,
     marginVertical: 10,
   },
   picker: {
-    height: 50,
+    height: 40,
     marginBottom: 20,
   },
+  logosize: {
+    height: '100%',
+    width: 120,
+    //marginLeft: 5,
+  },
+  selectJobView: {
+    width: '100%',
+    height: '50%',
+    backgroundColor: 'orange'
+  }
 });
