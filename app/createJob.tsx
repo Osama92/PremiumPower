@@ -63,8 +63,11 @@ export default function CreateJobScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={{height: 80, width: '100%'}}>
+      <View style={{height: 80, width: '100%', flexDirection: 'row',justifyContent:'space-between', alignItems: 'center'}}>
       <Image source={require('../assets/images/PPS.png')} style={styles.logosize} resizeMode="contain" />
+      <TouchableOpacity onPress={()=>router.replace('/(tabs)')}>
+        <Text style={{marginRight:20}}>Back</Text>
+      </TouchableOpacity>
       </View>
 
       <View style={styles.selectJobView}>
@@ -100,8 +103,26 @@ export default function CreateJobScreen() {
         </>
       )}
 
+    {/* {jobType !== 'Generator Rental' && (
+        <>
+        <View style={styles.generatorRental}>
+          <Text style={styles.label}>Select KVA Range:</Text>
+          <Picker
+            selectedValue={selectedKVA} // string or null
+            onValueChange={(value) => setSelectedKVA(value)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Select KVA Range" value={null} />
+            {kvaOptions.map((kva) => (
+              <Picker.Item key={kva} label={kva} value={kva} />
+            ))}
+          </Picker>
+          </View>
+        </>
+      )} */}
+
       <TouchableOpacity style={styles.createJob} onPress={handleSubmit}>
-        <Text>Create Job</Text>
+        <Text style={{color: 'white'}}>Create Job</Text>
       </TouchableOpacity>
     </View>
   );
@@ -132,7 +153,8 @@ const styles = StyleSheet.create({
   },
   generatorRental: {
     width: '100%',
-    height: '30%'
+    height: '30%',
+    marginTop: 30
   },
   createJob: {
     position: 'absolute',
@@ -141,7 +163,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 40,
     width:'100%',
-    backgroundColor:'orange'
+    backgroundColor:'#00443F',
+    marginTop:20
   }
 });
 
