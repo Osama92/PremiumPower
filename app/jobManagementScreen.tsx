@@ -9,6 +9,7 @@ interface Job {
   createdAt: Date;
   status: string;
   assignedTo?: string;
+  jobType: string;
 }
 
 interface User {
@@ -46,6 +47,7 @@ const jobManagementScreen = () => {
           createdAt: new Date(jobData.createdAt.seconds * 1000),
           status: jobData.status,
           assignedTo: jobData.assignedTo,
+          jobType: jobData.jobType
         });
       });
 
@@ -118,8 +120,10 @@ const jobManagementScreen = () => {
 
     return (
       <View style={styles.jobRow}>
-        <Text style={styles.text}>{item.createdBy}</Text>
-        <Text style={styles.text}>{item.createdAt.toDateString()}</Text>
+        <Text style={styles.text}>Created by: {item.createdBy}</Text>
+        <Text style={styles.text}> Job Type: {item.jobType}</Text>
+        <Text style={styles.text}> created at: {item.createdAt.toDateString()}</Text>
+
         
         {/* Job Status Picker */}
         <View style={styles.pickerContainer}>
