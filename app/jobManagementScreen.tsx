@@ -216,9 +216,10 @@
 // export default jobManagementScreen;
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Alert, RefreshControl, Button, TouchableOpacity } from 'react-native';
-import { getFirestore, collection, query, where, getDocs, doc, updateDoc, orderBy } from 'firebase/firestore';
+import { View, Text, FlatList, StyleSheet, Alert, RefreshControl, Button, TouchableOpacity, Image } from 'react-native';
+import { getFirestore, collection, query, where, getDocs, doc, updateDoc, orderBy, deleteDoc } from 'firebase/firestore';
 import { Picker } from '@react-native-picker/picker';
+import {router} from 'expo-router'
 
 interface Job {
   id: string;
@@ -327,6 +328,19 @@ const jobManagementScreen = () => {
     }
   };
 
+  const handleRemove = async (jobId: string) => {
+    try {
+      const firestore = getFirestore();
+      const jobRef = doc(firestore, 'Jobs', jobId);
+      await deleteDoc(jobRef); // Delete the job from Firestore
+      Alert.alert('Success', 'Job removed successfully.');
+      fetchJobs(); // Refresh jobs after deletion
+    } catch (error) {
+      console.error('Error removing job:', error);
+      Alert.alert('Error', 'Failed to remove job.');
+    }
+  };
+
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchJobs();
@@ -337,6 +351,7 @@ const jobManagementScreen = () => {
     const isAssignedTo = jobStatus[item.id] === 'Assigned to';
 
     return (
+     <>
       <View style={styles.jobRow}>
         <Text style={styles.text}>Created by: {item.createdBy}</Text>
         <Text style={styles.text}>Job Type: {item.jobType}</Text>
@@ -366,8 +381,9 @@ const jobManagementScreen = () => {
             <TouchableOpacity onPress={() => handleSave(item.id)} style={styles.saveBtn}>
               <Text style={styles.btnText}>Save</Text>
             </TouchableOpacity>
+            <Button title="Remove" onPress={() => handleRemove(item.id)} color="red" />
         </View>
-
+        
         {/* Engineer Picker (Conditional) */}
         {isAssignedTo && (
           <View style={styles.pickerContainer}>
@@ -390,6 +406,7 @@ const jobManagementScreen = () => {
           <Text style={styles.text}>Assigned to: {item.assignedTo}</Text>
         )}
       </View>
+      </>
     );
   };
 
@@ -403,6 +420,13 @@ const jobManagementScreen = () => {
 
   return (
     <View style={styles.container}>
+      <>
+      <View style={{height: 80, width: '100%', flexDirection: 'row',justifyContent:'space-between', alignItems: 'center'}}>
+      <Image source={require('../assets/images/PPS.png')} style={styles.logosize} resizeMode="contain" />
+      <TouchableOpacity onPress={()=>router.replace('/(tabs)')}>
+        <Text style={{marginRight:20}}>Back</Text>
+      </TouchableOpacity>
+      </View>
       <FlatList
         data={jobs}
         keyExtractor={(item) => item.id}
@@ -411,6 +435,7 @@ const jobManagementScreen = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
+      </>
     </View>
   );
 };
@@ -427,6 +452,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
+    fontWeight: 'bold'
   },
   pickerContainer: {
     width: 200,
@@ -449,6 +475,11 @@ const styles = StyleSheet.create({
   },
   btnText: {
     color: '#fff'
+  },
+  logosize: {
+    height: '100%',
+    width: 120,
+    marginLeft: 20
   }
 });
 
