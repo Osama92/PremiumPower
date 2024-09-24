@@ -377,11 +377,14 @@ const jobManagementScreen = () => {
           </View>
 
           {/* Save Button */}
-          {/* <Button title="Save" onPress={() => handleSave(item.id)} /> */}
+            <View style={styles.actionBtn}>
             <TouchableOpacity onPress={() => handleSave(item.id)} style={styles.saveBtn}>
               <Text style={styles.btnText}>Save</Text>
             </TouchableOpacity>
-            <Button title="Remove" onPress={() => handleRemove(item.id)} color="red" />
+            <TouchableOpacity onPress={() => handleRemove(item.id)} style={{marginTop:10,justifyContent: 'center',alignItems: 'center'}}>
+              <Text style={{color:'red'}}>Remove Job</Text>
+            </TouchableOpacity>
+            </View>
         </View>
         
         {/* Engineer Picker (Conditional) */}
@@ -466,7 +469,7 @@ const styles = StyleSheet.create({
   },
   saveBtn: {
     backgroundColor: '#00443F',
-    width:'8%',
+    width:'100%',
     height: 40,
     justifyContent: 'center',
     alignItems:'center',
@@ -480,6 +483,10 @@ const styles = StyleSheet.create({
     height: '100%',
     width: 120,
     marginLeft: 20
+  },
+  actionBtn:{
+    flexDirection:'column',
+    width: '10%'
   }
 });
 
