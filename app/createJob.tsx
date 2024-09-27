@@ -103,23 +103,7 @@ export default function CreateJobScreen() {
         </>
       )}
 
-    {/* {jobType !== 'Generator Rental' && (
-        <>
-        <View style={styles.generatorRental}>
-          <Text style={styles.label}>Select KVA Range:</Text>
-          <Picker
-            selectedValue={selectedKVA} // string or null
-            onValueChange={(value) => setSelectedKVA(value)}
-            style={styles.picker}
-          >
-            <Picker.Item label="Select KVA Range" value={null} />
-            {kvaOptions.map((kva) => (
-              <Picker.Item key={kva} label={kva} value={kva} />
-            ))}
-          </Picker>
-          </View>
-        </>
-      )} */}
+   
 
       <TouchableOpacity style={styles.createJob} onPress={handleSubmit}>
         <Text style={{color: 'white'}}>Create Job</Text>
