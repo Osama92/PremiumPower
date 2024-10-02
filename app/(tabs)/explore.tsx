@@ -14,7 +14,6 @@ export default class explore extends Component {
 const styles = StyleSheet.create({
     container: {
         justifyContent:'center',
-        alignItems: 'center',
         flex: 1
     }
 })
