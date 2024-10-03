@@ -5,7 +5,7 @@ export default class explore extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>explore Bawo</Text>
+        <Text>explore</Text>
       </View>
     )
   }
