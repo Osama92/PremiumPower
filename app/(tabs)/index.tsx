@@ -43,24 +43,52 @@ export default function HomeScreen() {
           });
 
           // Fetch jobs created by the user
+          // const jobsRef = collection(firestore, 'Jobs');
+          // const jobsQuery = query(jobsRef, where('createdBy', '==', user.email));
+          // const jobsSnapshot = await getDocs(jobsQuery);
           const jobsRef = collection(firestore, 'Jobs');
-          const jobsQuery = query(jobsRef, where('createdBy', '==', user.email));
-          const jobsSnapshot = await getDocs(jobsQuery);
+          const jobsQuery = query(jobsRef, where('assignedTo', '==', "User02"));
+          const createdQuery = query(jobsRef, where('createdBy', '==', user.email));
+          //const jobsSnapshot = await getDocs(jobsQuery);
+          const [assignedSnapshot, createdSnapshot] = await Promise.all([
+            getDocs(jobsQuery),
+            getDocs(createdQuery),
+          ]);
 
           const fetchedJobs: any[] = [];
           const completed: any[] = [];
 
-          jobsSnapshot.forEach((doc) => {
-            const job = doc.data();
-            if (job.status === 'completed') {
-              completed.push({ id: doc.id, ...job });
-            } else {
-              fetchedJobs.push({ id: doc.id, ...job });
-            }
-          });
+          // jobsSnapshot.forEach((doc) => {
+          //   const job = doc.data();
+          //   if (job.status === 'completed') {
+          //     completed.push({ id: doc.id, ...job });
+          //   } else {
+          //     fetchedJobs.push({ id: doc.id, ...job });
+          //   }
+          // });
 
-          setJobs(fetchedJobs);
-          setCompletedJobs(completed);
+          // setJobs(fetchedJobs);
+          // setCompletedJobs(completed);
+          // Merge results from both queries
+        [...assignedSnapshot.docs, ...createdSnapshot.docs].forEach((doc) => {
+          const job = { id: doc.id, ...doc.data() };
+          if (job.status === 'completed') {
+            completed.push(job);
+          } else {
+            fetchedJobs.push(job);
+          }
+        });
+
+        // Remove duplicates if any
+        const uniqueJobs = (arr: any[]) => {
+          const map = new Map();
+          arr.forEach((job) => map.set(job.id, job));
+          return Array.from(map.values());
+        };
+
+        setJobs(uniqueJobs(fetchedJobs));
+        setCompletedJobs(uniqueJobs(completed));
+      
         }
       } else {
         Alert.alert('Error', 'User is not authenticated.');
