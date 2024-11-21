@@ -184,7 +184,7 @@ export default function HomeScreen() {
         {designation === 'Customer' && (
           <>
           <TouchableOpacity
-          onPress={() => router.push('/createJob')} // Directly navigating to the Create Job screen
+          onPress={() => router.push('/createJob')} 
         >
           <View style={styles.addIcon}><Text style={styles.addIconText}>+</Text></View>
         </TouchableOpacity>
