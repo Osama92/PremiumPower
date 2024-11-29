@@ -67,9 +67,7 @@ export default function HomeScreen() {
           //   }
           // });
 
-          // setJobs(fetchedJobs);
-          // setCompletedJobs(completed);
-          // Merge results from both queries
+          
         [...assignedSnapshot.docs, ...createdSnapshot.docs].forEach((doc) => {
           const job = { id: doc.id, ...doc.data() };
           if (job.status === 'completed') {
