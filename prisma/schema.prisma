@@ -1,0 +1,359 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER_SERVICE
+  ENGINEER
+  CUSTOMER
+}
+
+enum GeneratorStatus {
+  AVAILABLE
+  RENTED
+  MAINTENANCE
+  OUT_OF_SERVICE
+}
+
+enum RentalStatus {
+  BOOKED
+  CONFIRMED
+  DISPATCHED
+  DELIVERED
+  INSTALLED
+  ACTIVE
+  PICKUP_SCHEDULED
+  RETURNED
+  INSPECTED
+  CANCELLED
+}
+
+enum RepairStatus {
+  SUBMITTED
+  ASSESSED
+  QUOTE_SENT
+  APPROVED
+  IN_PROGRESS
+  PARTS_ORDERED
+  COMPLETED
+  INVOICED
+  PAID
+  CANCELLED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  DISPATCHED
+  DELIVERED
+  CANCELLED
+}
+
+enum MaintenancePackage {
+  BASIC
+  STANDARD
+  PREMIUM
+}
+
+enum MaintenancePlanStatus {
+  ACTIVE
+  PAUSED
+  EXPIRED
+  CANCELLED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum UrgencyLevel {
+  STANDARD
+  URGENT
+  EMERGENCY
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(CUSTOMER)
+  phone     String?
+  address   String?
+  avatar    String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  rentalRequests       RentalRequest[]     @relation("CustomerRentals")
+  assignedRentals      RentalRequest[]     @relation("EngineerRentals")
+  repairRequests       RepairRequest[]     @relation("CustomerRepairs")
+  assignedRepairs      RepairRequest[]     @relation("EngineerRepairs")
+  orders               Order[]
+  maintenancePlans     MaintenancePlan[]
+  maintenanceVisits    MaintenanceVisit[]
+  invoices             Invoice[]
+  sentMessages         Message[]           @relation("MessageSender")
+  receivedMessages     Message[]           @relation("MessageReceiver")
+  notifications        Notification[]
+  articles             Article[]
+  fieldReports         FieldReport[]
+}
+
+model Generator {
+  id              String          @id @default(cuid())
+  brand           String
+  model           String
+  kvaCapacity     Int
+  serialNumber    String          @unique
+  status          GeneratorStatus @default(AVAILABLE)
+  fuelType        String          @default("Diesel")
+  location        String?
+  acquisitionDate DateTime?
+  notes           String?
+  imageUrl        String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relations
+  rentalRequests    RentalRequest[]
+  maintenanceVisits MaintenanceVisit[]
+}
+
+model RentalRequest {
+  id              String       @id @default(cuid())
+  customerId      String
+  generatorId     String?
+  engineerId      String?
+  kvaNeeded       Int
+  startDate       DateTime
+  endDate         DateTime
+  deliveryAddress String
+  deliveryLGA     String?
+  eventType       String?
+  itemsToPower    String?
+  status          RentalStatus @default(BOOKED)
+  totalCost       Float?
+  depositPaid     Boolean      @default(false)
+  notes           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relations
+  customer  User       @relation("CustomerRentals", fields: [customerId], references: [id])
+  generator Generator? @relation(fields: [generatorId], references: [id])
+  engineer  User?      @relation("EngineerRentals", fields: [engineerId], references: [id])
+  invoices  Invoice[]
+  messages  Message[]
+  fieldReports FieldReport[]
+}
+
+model RepairRequest {
+  id                 String       @id @default(cuid())
+  customerId         String
+  engineerId         String?
+  generatorBrand     String
+  generatorModel     String?
+  problemDescription String
+  urgency            UrgencyLevel @default(STANDARD)
+  status             RepairStatus @default(SUBMITTED)
+  photos             String?      // JSON array of URLs
+  location           String?
+  diagnosisNotes     String?
+  estimatedCost      Float?
+  finalCost          Float?
+  partsRequired      String?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  // Relations
+  customer     User        @relation("CustomerRepairs", fields: [customerId], references: [id])
+  engineer     User?       @relation("EngineerRepairs", fields: [engineerId], references: [id])
+  invoices     Invoice[]
+  messages     Message[]
+  fieldReports FieldReport[]
+}
+
+model SparePart {
+  id            String   @id @default(cuid())
+  name          String
+  category      String
+  price         Float
+  stockQuantity Int      @default(0)
+  compatibility String?  // comma-separated brands
+  description   String?
+  imageUrl      String?
+  reorderLevel  Int      @default(5)
+  sku           String?  @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  orderItems OrderItem[]
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  customerId      String
+  totalAmount     Float
+  status          OrderStatus @default(PENDING)
+  deliveryOption  String      @default("standard")
+  deliveryAddress String
+  deliveryFee     Float       @default(0)
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  customer  User        @relation(fields: [customerId], references: [id])
+  items     OrderItem[]
+  invoices  Invoice[]
+}
+
+model OrderItem {
+  id          String    @id @default(cuid())
+  orderId     String
+  sparePartId String
+  quantity    Int
+  unitPrice   Float
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  order     Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  sparePart SparePart @relation(fields: [sparePartId], references: [id])
+}
+
+model MaintenancePlan {
+  id              String                @id @default(cuid())
+  customerId      String
+  packageType     MaintenancePackage
+  startDate       DateTime
+  nextServiceDate DateTime?
+  status          MaintenancePlanStatus @default(ACTIVE)
+  notes           String?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  // Relations
+  customer User              @relation(fields: [customerId], references: [id])
+  visits   MaintenanceVisit[]
+}
+
+model MaintenanceVisit {
+  id            String    @id @default(cuid())
+  planId        String
+  engineerId    String
+  generatorId   String?
+  scheduledDate DateTime
+  completedDate DateTime?
+  notes         String?
+  checklist     String?   // JSON string
+  partsUsed     String?   // JSON array
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  plan      MaintenancePlan @relation(fields: [planId], references: [id])
+  engineer  User            @relation(fields: [engineerId], references: [id])
+  generator Generator?      @relation(fields: [generatorId], references: [id])
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  customerId    String
+  relatedType   String        // rental | repair | order | maintenance
+  rentalId      String?
+  repairId      String?
+  orderId       String?
+  amount        Float
+  status        InvoiceStatus @default(DRAFT)
+  dueDate       DateTime?
+  paidDate      DateTime?
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  customer User           @relation(fields: [customerId], references: [id])
+  rental   RentalRequest? @relation(fields: [rentalId], references: [id])
+  repair   RepairRequest? @relation(fields: [repairId], references: [id])
+  order    Order?         @relation(fields: [orderId], references: [id])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  rentalId   String?
+  repairId   String?
+  content    String
+  readAt     DateTime?
+  createdAt  DateTime @default(now())
+
+  // Relations
+  sender   User           @relation("MessageSender", fields: [senderId], references: [id])
+  receiver User           @relation("MessageReceiver", fields: [receiverId], references: [id])
+  rental   RentalRequest? @relation(fields: [rentalId], references: [id])
+  repair   RepairRequest? @relation(fields: [repairId], references: [id])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String    @default("info") // info | success | warning | error
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  content     String
+  excerpt     String?
+  category    String
+  coverImage  String?
+  authorId    String
+  published   Boolean  @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  author User @relation(fields: [authorId], references: [id])
+}
+
+model FieldReport {
+  id         String   @id @default(cuid())
+  engineerId String
+  rentalId   String?
+  repairId   String?
+  notes      String
+  photos     String?  // JSON array of URLs
+  partsUsed  String?  // JSON array
+  createdAt  DateTime @default(now())
+
+  // Relations
+  engineer User           @relation(fields: [engineerId], references: [id])
+  rental   RentalRequest? @relation(fields: [rentalId], references: [id])
+  repair   RepairRequest? @relation(fields: [repairId], references: [id])
+}

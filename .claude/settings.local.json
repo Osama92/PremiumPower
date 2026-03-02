@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install prisma @prisma/client next-auth@beta @auth/prisma-adapter @tanstack/react-query zustand react-hook-form @hookform/resolvers zod recharts bcryptjs date-fns)",
+      "Bash(npx shadcn@latest init --yes --base-color slate)",
+      "Bash(npx shadcn@latest add toast sonner --yes)",
+      "Bash(npx shadcn@latest add sonner --yes)",
+      "Bash(npx prisma init --datasource-provider sqlite)",
+      "Bash(npx prisma generate)"
+    ]
+  }
+}
