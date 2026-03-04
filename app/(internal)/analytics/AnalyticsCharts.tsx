@@ -12,9 +12,13 @@ interface Props {
 
 export function AnalyticsCharts({ fleetStatus }: Props) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <RevenueChart />
-      <FleetStatusChart data={fleetStatus} />
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2">
+          <RevenueChart />
+        </div>
+        <FleetStatusChart data={fleetStatus} />
+      </div>
       <RequestsChart />
     </div>
   )

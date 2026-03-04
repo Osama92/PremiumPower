@@ -7,7 +7,7 @@ import { StatusTimeline } from "@/components/shared/StatusTimeline"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { formatDate, formatNaira, formatPhone } from "@/lib/utils"
-import { MapPin, Phone, Calendar, Zap, User } from "lucide-react"
+import { MapPin, Phone, Calendar, Gauge, User } from "lucide-react"
 import { RentalStatusUpdate } from "./RentalStatusUpdate"
 
 export default async function RentalDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -98,7 +98,7 @@ export default async function RentalDetailPage({ params }: { params: Promise<{ i
                 {rental.generator ? (
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <Zap className="h-4 w-4 text-muted-foreground" />
+                      <Gauge className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm font-medium">{rental.generator.brand} {rental.generator.model}</span>
                     </div>
                     <p className="text-xs text-muted-foreground ml-6">{rental.generator.kvaCapacity}KVA · {rental.generator.serialNumber}</p>

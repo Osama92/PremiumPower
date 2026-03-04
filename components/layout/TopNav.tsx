@@ -15,7 +15,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { getInitials } from "@/lib/utils"
-import { Zap, ShoppingCart, Bell, LogOut, Menu, X } from "lucide-react"
+import { ShoppingCart, LogOut, Menu, X } from "lucide-react"
+import Image from "next/image"
 import { useCartStore } from "@/hooks/useCart"
 import { useState } from "react"
 
@@ -38,26 +39,35 @@ export function TopNav() {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14">
           {/* Logo */}
-          <Link href="/portal" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#1B3A5C] flex items-center justify-center">
-              <Zap className="w-5 h-5 text-[#D4A843]" />
+          <Link href="/portal" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-[#0f2440] flex items-center justify-center overflow-hidden flex-shrink-0">
+              <Image
+                src="/pps-logo.png"
+                alt="PPS"
+                width={28}
+                height={28}
+                className="object-contain w-6 h-6"
+              />
             </div>
-            <span className="font-bold text-[#1B3A5C] text-lg">PPS Hub</span>
+            <div>
+              <p className="text-[13px] font-bold text-[#0f2440] leading-none">PPS Hub</p>
+              <p className="text-[10px] text-gray-400 leading-none mt-0.5">Premium Power Solutions</p>
+            </div>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-0.5">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  "px-3 py-1.5 rounded-md text-[13px] font-medium transition-colors",
                   pathname === link.href || (link.href !== "/portal" && pathname.startsWith(link.href))
-                    ? "bg-[#1B3A5C] text-white"
-                    : "text-gray-600 hover:bg-gray-100"
+                    ? "bg-[#0f2440] text-white"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                 )}
               >
                 {link.label}
@@ -66,12 +76,12 @@ export function TopNav() {
           </nav>
 
           {/* Right actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {/* Cart */}
-            <Link href="/portal/store/cart" className="relative p-2 rounded-lg hover:bg-gray-100">
-              <ShoppingCart className="h-5 w-5 text-gray-600" />
+            <Link href="/portal/store/cart" className="relative p-2 rounded-md hover:bg-gray-100 transition-colors">
+              <ShoppingCart className="h-[18px] w-[18px] text-gray-600" />
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#D4A843] text-[#1B3A5C] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-0.5 -right-0.5 bg-[#D4A843] text-[#0f2440] text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center leading-none">
                   {totalItems}
                 </span>
               )}
@@ -81,20 +91,20 @@ export function TopNav() {
             {session?.user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-gray-100">
+                  <button className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-gray-100 transition-colors">
                     <Avatar className="h-7 w-7">
-                      <AvatarFallback className="bg-[#1B3A5C] text-white text-xs font-bold">
+                      <AvatarFallback className="bg-[#0f2440] text-white text-xs font-bold">
                         {getInitials(session.user.name)}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="hidden sm:block text-sm font-medium text-gray-700">
+                    <span className="hidden sm:block text-[13px] font-medium text-gray-700">
                       {session.user.name.split(" ")[0]}
                     </span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuLabel>
-                    <p className="font-medium">{session.user.name}</p>
+                    <p className="font-medium text-[13px]">{session.user.name}</p>
                     <p className="text-xs text-muted-foreground font-normal">{session.user.email}</p>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -120,26 +130,26 @@ export function TopNav() {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden"
+              className="md:hidden h-8 w-8"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
-              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </Button>
           </div>
         </div>
 
         {/* Mobile nav */}
         {mobileOpen && (
-          <nav className="md:hidden py-3 border-t border-gray-100">
+          <nav className="md:hidden py-3 border-t border-gray-100 space-y-0.5">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "block px-3 py-2 rounded-lg text-sm font-medium mb-1",
+                  "block px-3 py-2 rounded-md text-[13px] font-medium",
                   pathname === link.href || (link.href !== "/portal" && pathname.startsWith(link.href))
-                    ? "bg-[#1B3A5C] text-white"
+                    ? "bg-[#0f2440] text-white"
                     : "text-gray-600 hover:bg-gray-100"
                 )}
               >

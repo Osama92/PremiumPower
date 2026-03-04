@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { formatDate, formatNaira } from "@/lib/utils"
 import Link from "next/link"
-import { Plus, Zap } from "lucide-react"
+import { Plus, Gauge } from "lucide-react"
 
 export default async function CustomerRentalsPage() {
   const session = await auth()
@@ -35,7 +35,7 @@ export default async function CustomerRentalsPage() {
         <Card className="text-center p-12">
           <div className="flex flex-col items-center gap-4">
             <div className="w-16 h-16 bg-[#1B3A5C]/10 rounded-full flex items-center justify-center">
-              <Zap className="h-8 w-8 text-[#1B3A5C]" />
+              <Gauge className="h-8 w-8 text-[#1B3A5C]" />
             </div>
             <h3 className="font-semibold text-[#1B3A5C]">No rentals yet</h3>
             <p className="text-sm text-muted-foreground max-w-xs">Book a generator for your next event, office, or construction project</p>

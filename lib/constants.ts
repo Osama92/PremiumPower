@@ -166,7 +166,7 @@ export const MAINTENANCE_PACKAGES = {
 // Navigation items per role
 export const ADMIN_NAV = [
   { label: "Dashboard", href: "/dashboard", icon: "LayoutDashboard" },
-  { label: "Generator Fleet", href: "/fleet", icon: "Zap" },
+  { label: "Generator Fleet", href: "/fleet", icon: "Gauge" },
   { label: "Rentals", href: "/rentals", icon: "CalendarDays" },
   { label: "Repairs", href: "/repairs", icon: "Wrench" },
   { label: "Spare Parts", href: "/parts", icon: "Package" },
@@ -195,7 +195,7 @@ export const ENGINEER_NAV = [
   { label: "Rentals", href: "/rentals", icon: "CalendarDays" },
   { label: "Repairs", href: "/repairs", icon: "Wrench" },
   { label: "Maintenance", href: "/maintenance", icon: "ClipboardCheck" },
-  { label: "Fleet", href: "/fleet", icon: "Zap" },
+  { label: "Fleet", href: "/fleet", icon: "Gauge" },
   { label: "Messages", href: "/messages", icon: "MessageSquare" },
 ];
 

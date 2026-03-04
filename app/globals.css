@@ -48,11 +48,11 @@
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.375rem;
   /* PPS Brand Colors */
   --pps-blue: #1B3A5C;
   --pps-gold: #D4A843;
-  --background: oklch(1 0 0);
+  --background: oklch(0.977 0.003 240);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
@@ -69,7 +69,7 @@
   --accent: oklch(0.75 0.12 80);
   --accent-foreground: oklch(0.129 0.042 264.695);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.929 0.013 255.508);
+  --border: oklch(0.91 0.013 255.508);
   --input: oklch(0.929 0.013 255.508);
   --ring: oklch(0.27 0.08 240);
   --chart-1: oklch(0.27 0.08 240);

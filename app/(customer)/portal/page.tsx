@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { formatDate, formatNaira } from "@/lib/utils"
-import { Zap, Wrench, Package, ClipboardCheck, ArrowRight } from "lucide-react"
+import { Gauge, Wrench, Package, ClipboardCheck, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
 export default async function CustomerPortalPage() {
@@ -37,7 +37,7 @@ export default async function CustomerPortalPage() {
   ])
 
   const quickActions = [
-    { label: "Rent a Generator", description: "Book generator for your event or business", href: "/portal/rentals/new", icon: Zap, color: "bg-[#1B3A5C]" },
+    { label: "Rent a Generator", description: "Book generator for your event or business", href: "/portal/rentals/new", icon: Gauge, color: "bg-[#0f2440]" },
     { label: "Request Repair", description: "Get your generator diagnosed and fixed", href: "/portal/repairs/new", icon: Wrench, color: "bg-orange-600" },
     { label: "Buy Spare Parts", description: "Browse our full parts catalog", href: "/portal/store", icon: Package, color: "bg-emerald-600" },
     { label: "Maintenance Plan", description: "Subscribe to regular service visits", href: "/portal/maintenance", icon: ClipboardCheck, color: "bg-purple-600" },
@@ -92,7 +92,7 @@ export default async function CustomerPortalPage() {
                   <CardContent className="p-3 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-[#1B3A5C]/10 rounded-lg flex items-center justify-center">
-                        <Zap className="h-4 w-4 text-[#1B3A5C]" />
+                        <Gauge className="h-4 w-4 text-[#0f2440]" />
                       </div>
                       <div>
                         <p className="text-sm font-medium">{rental.kvaNeeded}KVA {rental.generator ? `— ${rental.generator.brand}` : ""}</p>

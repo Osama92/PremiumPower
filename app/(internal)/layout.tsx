@@ -13,10 +13,10 @@ export default async function InternalLayout({
   if (session.user.role === "CUSTOMER") redirect("/portal")
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F5F5F5]">
+    <div className="flex h-screen overflow-hidden bg-[#f0f2f5]">
       <Sidebar />
       <main className="flex-1 overflow-y-auto">
-        <div className="p-6 lg:pl-6 pt-16 lg:pt-6">
+        <div className="p-6 lg:p-7 pt-16 lg:pt-7 max-w-[1400px]">
           {children}
         </div>
       </main>

@@ -15,7 +15,7 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
 import { KVA_OPTIONS, LAGOS_LGAS, EVENT_TYPES } from "@/lib/constants"
 import { calculateRentalCost, formatNaira } from "@/lib/utils"
-import { Zap, Calculator, Loader2 } from "lucide-react"
+import { Gauge, Calculator, Loader2 } from "lucide-react"
 
 export default function NewRentalPage() {
   const router = useRouter()
@@ -82,7 +82,7 @@ export default function NewRentalPage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-[#1B3A5C] text-base flex items-center gap-2">
-                <Zap className="h-4 w-4" />
+                <Gauge className="h-4 w-4" />
                 Power Requirements
               </CardTitle>
             </CardHeader>

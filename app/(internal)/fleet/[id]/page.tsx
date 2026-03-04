@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { formatDate, formatNaira } from "@/lib/utils"
-import { Zap, MapPin, Calendar, Hash, Wrench } from "lucide-react"
+import { Gauge, MapPin, Calendar, Hash, Wrench } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { GeneratorStatusUpdate } from "./GeneratorStatusUpdate"
@@ -63,7 +63,7 @@ export default async function GeneratorDetailPage({ params }: { params: Promise<
             <Separator />
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <Zap className="h-4 w-4" />
+                <Gauge className="h-4 w-4" />
                 <span>{generator.kvaCapacity} KVA Capacity</span>
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">

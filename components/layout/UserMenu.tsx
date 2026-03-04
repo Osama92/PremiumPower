@@ -25,16 +25,16 @@ export function UserMenu({ collapsed = false }: { collapsed?: boolean }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className={`flex items-center gap-3 w-full rounded-lg p-2 hover:bg-sidebar-accent transition-colors ${collapsed ? "justify-center" : ""}`}>
+        <button className={`flex items-center gap-3 w-full rounded-md p-2 hover:bg-white/10 transition-colors ${collapsed ? "justify-center" : ""}`}>
           <Avatar className="h-8 w-8 flex-shrink-0">
-            <AvatarFallback className="bg-[#D4A843] text-[#1B3A5C] text-xs font-bold">
+            <AvatarFallback className="bg-[#D4A843] text-[#0f2440] text-xs font-bold">
               {initials}
             </AvatarFallback>
           </Avatar>
           {!collapsed && (
             <div className="flex-1 text-left min-w-0">
-              <p className="text-xs font-semibold text-sidebar-foreground truncate">{name}</p>
-              <p className="text-xs text-sidebar-foreground/60">{ROLE_LABELS[role as Role]}</p>
+              <p className="text-[13px] font-semibold text-white truncate leading-none">{name}</p>
+              <p className="text-[11px] text-white/50 mt-0.5 leading-none">{ROLE_LABELS[role as Role]}</p>
             </div>
           )}
         </button>
@@ -43,7 +43,7 @@ export function UserMenu({ collapsed = false }: { collapsed?: boolean }) {
         <DropdownMenuLabel>
           <p className="font-medium">{name}</p>
           <p className="text-xs text-muted-foreground font-normal">{email}</p>
-          <p className="text-xs text-[#1B3A5C] font-medium">{ROLE_LABELS[role as Role]}</p>
+          <p className="text-xs text-[#0f2440] font-medium">{ROLE_LABELS[role as Role]}</p>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>

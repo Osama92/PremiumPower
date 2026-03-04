@@ -21,8 +21,13 @@ const DEFAULT_DATA = [
   { name: "Out of Service", value: 1 },
 ]
 
+function toTitleCase(str: string) {
+  return str.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
 export function FleetStatusChart({ data = DEFAULT_DATA }: FleetStatusChartProps) {
-  const total = data.reduce((sum, d) => sum + d.value, 0)
+  const normalized = data.map((d) => ({ ...d, name: toTitleCase(d.name) }))
+  const total = normalized.reduce((sum, d) => sum + d.value, 0)
 
   return (
     <Card>
@@ -34,7 +39,7 @@ export function FleetStatusChart({ data = DEFAULT_DATA }: FleetStatusChartProps)
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
               <Pie
-                data={data}
+                data={normalized}
                 cx="50%"
                 cy="50%"
                 innerRadius={55}
@@ -42,7 +47,7 @@ export function FleetStatusChart({ data = DEFAULT_DATA }: FleetStatusChartProps)
                 paddingAngle={3}
                 dataKey="value"
               >
-                {data.map((entry) => (
+                {normalized.map((entry) => (
                   <Cell key={entry.name} fill={COLORS[entry.name as keyof typeof COLORS] || "#6b7280"} />
                 ))}
               </Pie>
@@ -56,7 +61,7 @@ export function FleetStatusChart({ data = DEFAULT_DATA }: FleetStatusChartProps)
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2 mt-2">
-          {data.map((entry) => (
+          {normalized.map((entry) => (
             <div key={entry.name} className="flex items-center gap-2 text-xs">
               <div
                 className="w-2.5 h-2.5 rounded-full flex-shrink-0"
